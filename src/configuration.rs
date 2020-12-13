@@ -1,6 +1,3 @@
-use config;
-
-
 #[derive(serde::Deserialize)]
 pub struct Configuration {
     pub application_port: u16,

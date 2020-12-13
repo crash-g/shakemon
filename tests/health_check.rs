@@ -17,6 +17,7 @@ async fn health_check_works() {
 }
 
 fn spawn_app() -> String {
+    shakespeare_pokemon::telemetry::init_log("TEST_LOG");
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
     let port = listener.local_addr().unwrap().port();
     let server = shakespeare_pokemon::run(listener).expect("Failed to bind address");
