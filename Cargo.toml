@@ -22,3 +22,4 @@ serde = { version = "1", features = ["derive"]}
 [dev-dependencies]
 reqwest = { version = "0.10.9", features = ["json"] }
 tokio = "0.2.24"  # This must be the same version that actix uses
+wiremock = "0.3.0"

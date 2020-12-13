@@ -1,4 +1,4 @@
-application_port: 8000
+application_port: 8000 # Not applicable for tests
 external_services:
   pokeapi_url: "TODO1"
   shakespeare_translation_url: "TODO2"

@@ -4,13 +4,16 @@ use actix_web::{web, App, HttpServer};
 use std::net::TcpListener;
 
 pub mod configuration;
+use configuration::ExternalServices;
+
 mod routes;
 pub mod telemetry;
 
-pub fn run(listener: TcpListener) -> std::io::Result<Server> {
-    let server = HttpServer::new(|| {
+pub fn run(listener: TcpListener, external_services: ExternalServices) -> std::io::Result<Server> {
+    let server = HttpServer::new(move || {
         App::new()
             .wrap(Logger::default())
+            .data(external_services.clone())
             .route("/health_check", web::get().to(routes::health_check))
             .route(
                 "/pokemon/{pokemon_name}",
