@@ -12,6 +12,10 @@ pub fn run(listener: TcpListener) -> std::io::Result<Server> {
         App::new()
             .wrap(Logger::default())
             .route("/health_check", web::get().to(routes::health_check))
+            .route(
+                "/pokemon/{pokemon_name}",
+                web::get().to(routes::get_pokemon_description),
+            )
     })
     .listen(listener)?
     .run();
