@@ -1719,6 +1719,7 @@ dependencies = [
  "actix-rt",
  "actix-web",
  "config",
+ "log",
  "pretty_env_logger",
  "reqwest",
  "serde 1.0.118",
