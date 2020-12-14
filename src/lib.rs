@@ -4,11 +4,12 @@ use actix_web::{web, App, HttpServer};
 use std::net::TcpListener;
 
 pub mod configuration;
-pub mod telemetry;
-use configuration::ExternalServices;
-
+mod errors;
 mod external_services;
 mod routes;
+pub mod telemetry;
+
+use configuration::ExternalServices;
 
 pub fn run(listener: TcpListener, external_services: ExternalServices) -> std::io::Result<Server> {
     let server = HttpServer::new(move || {

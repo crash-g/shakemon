@@ -1,10 +1,46 @@
+use actix_web::http::StatusCode;
 use wiremock::matchers::{method, path};
-use wiremock::{Mock, MockServer, ResponseTemplate};
+use wiremock::{Mock, MockServer, Request, ResponseTemplate};
 
 mod data;
 mod utils;
 
 use data::{pokeapi, shakespeare};
+
+#[actix_rt::test]
+async fn get_pokemon_description_not_found() {
+    let pokemon_name_ref = "charizard";
+
+    let mock_pokeapi_server = MockServer::start().await;
+    let mock_shakespeare_server = MockServer::start().await;
+    let address = utils::spawn_app_with_mocked_external_services(
+        &mock_pokeapi_server,
+        &mock_shakespeare_server,
+    );
+
+    Mock::given(method("GET"))
+        .and(path(format!("{}/{}", pokeapi::ENDPOINT, pokemon_name_ref)))
+        .respond_with(ResponseTemplate::new(404))
+        .expect(1)
+        .mount(&mock_pokeapi_server)
+        .await;
+
+    Mock::given(move |request: &Request| true)
+        .respond_with(ResponseTemplate::new(200))
+        .expect(0)
+        .mount(&mock_shakespeare_server)
+        .await;
+
+    let client = reqwest::Client::new();
+
+    let response = client
+        .get(&format!("{}/pokemon/{}", address, pokemon_name_ref))
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    assert_eq!(response.status(), StatusCode::NOT_FOUND);
+}
 
 #[actix_rt::test]
 async fn get_pokemon_description_works() {
