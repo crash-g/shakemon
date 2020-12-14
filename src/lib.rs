@@ -9,6 +9,7 @@ use configuration::ExternalServices;
 
 mod pokeapi;
 mod routes;
+mod shakespeare;
 
 pub fn run(listener: TcpListener, external_services: ExternalServices) -> std::io::Result<Server> {
     let server = HttpServer::new(move || {

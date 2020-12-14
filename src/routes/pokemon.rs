@@ -1,5 +1,5 @@
 use crate::configuration::ExternalServices;
-use crate::pokeapi;
+use crate::{pokeapi, shakespeare};
 use actix_web::{client::Client, web, HttpRequest, Result};
 
 #[derive(serde::Serialize)]
@@ -33,6 +33,7 @@ async fn get_description(
     let description =
         pokeapi::get_pokemon_description(pokemon_name, &client, &external_services).await;
     log::info!("Normal description: {}", description);
-
-    "TODO".to_string()
+    let translated_description =
+        shakespeare::get_translation(&description, &client, &external_services).await;
+    translated_description
 }

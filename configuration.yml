@@ -1,4 +1,4 @@
 application_port: 8000
 external_services:
   pokeapi_url: "https://pokeapi.co"
-  shakespeare_translation_url: "TODO2"
+  shakespeare_translation_url: "https://api.funtranslations.com"

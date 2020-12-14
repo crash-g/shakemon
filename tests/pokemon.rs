@@ -4,11 +4,13 @@ use wiremock::{Mock, MockServer, ResponseTemplate};
 mod common;
 mod data;
 
-use data::pokeapi;
+use data::{pokeapi, shakespeare};
 
 #[actix_rt::test]
 async fn get_pokemon_description_works() {
-    let pokemon_name = "charizard";
+    let pokemon_name_ref = "charizard";
+    let description_ref = "Description from pokeapi";
+    let translated_description_ref = "Translated description from shakespeare";
 
     let mock_pokeapi_server = MockServer::start().await;
     let mock_shakespeare_server = MockServer::start().await;
@@ -17,10 +19,8 @@ async fn get_pokemon_description_works() {
         &mock_shakespeare_server,
     );
 
-    let client = reqwest::Client::new();
-
     let flavor_text_entry = pokeapi::FlavorTextEntry {
-        flavor_text: "Text got from pokeapi".to_string(),
+        flavor_text: description_ref.to_string(),
         language: pokeapi::Language {
             name: "en".to_string(),
         },
@@ -29,19 +29,32 @@ async fn get_pokemon_description_works() {
         flavor_text_entries: vec![flavor_text_entry],
     };
     Mock::given(method("GET"))
-        .and(path(format!("{}/{}", pokeapi::ENDPOINT, pokemon_name)))
+        .and(path(format!("{}/{}", pokeapi::ENDPOINT, pokemon_name_ref)))
         .respond_with(ResponseTemplate::new(200).set_body_json(pokemon))
         .mount(&mock_pokeapi_server)
         .await;
 
+    let description = shakespeare::Translation {
+        contents: shakespeare::TranslationContents {
+            translated: translated_description_ref.to_string(),
+        },
+    };
+    Mock::given(method("POST"))
+        .and(path(format!("{}", shakespeare::ENDPOINT)))
+        .respond_with(ResponseTemplate::new(200).set_body_json(description))
+        .mount(&mock_shakespeare_server)
+        .await;
+
+    let client = reqwest::Client::new();
+
     let response = client
-        .get(&format!("{}/pokemon/{}", address, pokemon_name))
+        .get(&format!("{}/pokemon/{}", address, pokemon_name_ref))
         .send()
         .await
         .expect("Failed to execute request.");
 
-    println!("status: {:?}", response.status());
     assert!(response.status().is_success());
     let pokemon: data::Pokemon = response.json().await.unwrap();
-    assert_eq!(pokemon_name, &pokemon.name);
+    assert_eq!(pokemon_name_ref, &pokemon.name);
+    assert_eq!(translated_description_ref, &pokemon.description);
 }

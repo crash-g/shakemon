@@ -23,3 +23,17 @@ pub mod pokeapi {
         pub name: String,
     }
 }
+
+pub mod shakespeare {
+    pub const ENDPOINT: &str = "/translate/shakespeare";
+
+    #[derive(serde::Serialize, serde::Deserialize)]
+    pub struct Translation {
+        pub contents: TranslationContents,
+    }
+
+    #[derive(serde::Serialize, serde::Deserialize)]
+    pub struct TranslationContents {
+        pub translated: String,
+    }
+}
