@@ -1,5 +1,5 @@
 use crate::configuration::ExternalServices;
-use crate::{pokeapi, shakespeare};
+use crate::external_services::{pokeapi, shakespeare};
 use actix_web::{client::Client, web, HttpRequest, Result};
 
 #[derive(serde::Serialize)]

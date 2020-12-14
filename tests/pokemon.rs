@@ -1,8 +1,8 @@
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
-mod common;
 mod data;
+mod utils;
 
 use data::{pokeapi, shakespeare};
 
@@ -14,7 +14,7 @@ async fn get_pokemon_description_works() {
 
     let mock_pokeapi_server = MockServer::start().await;
     let mock_shakespeare_server = MockServer::start().await;
-    let address = common::spawn_app_with_mocked_external_services(
+    let address = utils::spawn_app_with_mocked_external_services(
         &mock_pokeapi_server,
         &mock_shakespeare_server,
     );

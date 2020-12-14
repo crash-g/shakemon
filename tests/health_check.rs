@@ -1,8 +1,8 @@
-mod common;
+mod utils;
 
 #[actix_rt::test]
 async fn health_check_works() {
-    let address = common::spawn_app();
+    let address = utils::spawn_app();
 
     let client = reqwest::Client::new();
 
