@@ -31,6 +31,7 @@ async fn get_pokemon_description_works() {
     Mock::given(method("GET"))
         .and(path(format!("{}/{}", pokeapi::ENDPOINT, pokemon_name_ref)))
         .respond_with(ResponseTemplate::new(200).set_body_json(pokemon))
+        .expect(1)
         .mount(&mock_pokeapi_server)
         .await;
 
@@ -42,6 +43,7 @@ async fn get_pokemon_description_works() {
     Mock::given(method("POST"))
         .and(path(format!("{}", shakespeare::ENDPOINT)))
         .respond_with(ResponseTemplate::new(200).set_body_json(description))
+        .expect(1)
         .mount(&mock_shakespeare_server)
         .await;
 
