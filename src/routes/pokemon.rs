@@ -41,12 +41,12 @@ async fn get_description(
 
     let description = pokeapi::get_pokemon_description(pokemon_name, &client, pokeapi_url)
         .await
-        .map_err(|e| ExternalServiceError::from_pokeapi(e))?;
+        .map_err(ExternalServiceError::from_pokeapi)?;
 
     let translated_description =
         shakespeare::get_translation(&description, &client, shakespeare_translation_url)
             .await
-            .map_err(|e| ExternalServiceError::from_shakespeare_api(e))?;
+            .map_err(ExternalServiceError::from_shakespeare_api)?;
 
     Ok(translated_description)
 }

@@ -38,7 +38,7 @@ async fn get_pokemon_description_works() {
         },
     };
     Mock::given(method("POST"))
-        .and(path(format!("{}", shakespeare::ENDPOINT)))
+        .and(path(shakespeare::ENDPOINT.to_string()))
         .respond_with(ResponseTemplate::new(200).set_body_json(description))
         .expect(1)
         .mount(&mock_shakespeare_server)
@@ -114,7 +114,7 @@ async fn get_pokemon_description_too_many_requests() {
         .await;
 
     Mock::given(method("POST"))
-        .and(path(format!("{}", shakespeare::ENDPOINT)))
+        .and(path(shakespeare::ENDPOINT.to_string()))
         .respond_with(ResponseTemplate::new(429))
         .expect(1)
         .mount(&mock_shakespeare_server)

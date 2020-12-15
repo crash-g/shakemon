@@ -33,7 +33,7 @@ pub(crate) async fn get_translation(
         .json(&body)
         .send()
         .await
-        .map_err(|e| FailedRequest::connection_error(e))?;
+        .map_err(FailedRequest::connection_error)?;
 
     if response.status() == StatusCode::OK {
         let translation: Translation = response

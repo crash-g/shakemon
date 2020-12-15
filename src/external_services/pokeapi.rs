@@ -31,7 +31,7 @@ pub(crate) async fn get_pokemon_description(
         .get(&url)
         .send()
         .await
-        .map_err(|e| FailedRequest::connection_error(e))?;
+        .map_err(FailedRequest::connection_error)?;
 
     if response.status() == StatusCode::OK {
         let pokemon: Pokemon = response
@@ -55,7 +55,7 @@ fn extract_description(pokemon: Pokemon) -> Option<String> {
     pokemon
         .flavor_text_entries
         .into_iter()
-        .filter(|entry| &entry.language.name == LANGUAGE)
+        .filter(|entry| entry.language.name == LANGUAGE)
         .max_by_key(|entry| entry.flavor_text.len())
         .map(|entry| entry.flavor_text)
 }

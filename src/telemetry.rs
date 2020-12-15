@@ -4,7 +4,7 @@ pub fn init_log(env_var_name: &str) {
     if env::var(env_var_name).is_err() {
         env::set_var(env_var_name, "info");
     }
-    if let Err(_) = pretty_env_logger::try_init_timed_custom_env(env_var_name) {
+    if pretty_env_logger::try_init_timed_custom_env(env_var_name).is_err() {
         log::warn!("The log has already been initialized!")
     }
 }
