@@ -1,5 +1,5 @@
 use crate::configuration::ExternalServices;
-use crate::errors::CustomError;
+use crate::errors::FailedRequest;
 use actix_web::client::Client;
 use actix_web::http::StatusCode;
 
@@ -24,40 +24,30 @@ pub(crate) async fn get_translation(
     text: &str,
     client: &Client,
     external_services: &ExternalServices,
-) -> Result<String, CustomError> {
+) -> Result<String, FailedRequest> {
     let url = [&external_services.shakespeare_translation_url, ENDPOINT].concat();
     let body = TextToTranslate {
         text: text.to_string(),
     };
-    let mut response = client.post(url).send_json(&body).await.map_err(|e| {
-        log::error!(
-            "An error occurred while querying the shakespeare translation endpoint. \
-             Error: {:?}",
-            e
-        );
-        CustomError::InternalServerError
-    })?;
+    let mut response = client
+        .post(url)
+        .send_json(&body)
+        .await
+        .map_err(|e| FailedRequest::connection_error(e))?;
 
     if response.status() == StatusCode::OK {
-        let translation: Translation = response.json().await.map_err(|e| {
-            log::error!(
-                "An error occurred while deserializing the JSON payload \
-                 from the shakespeare translation endpoint. Error: {:?}",
-                e
-            );
-            CustomError::InternalServerError
-        })?;
+        let translation: Translation = response
+            .json()
+            .await
+            .map_err(|e| FailedRequest::invalid_payload(text.to_string(), e))?;
 
         Ok(translation.contents.translated)
     } else if response.status() == StatusCode::TOO_MANY_REQUESTS {
-        log::debug!("The shakespeare translation endpoint returned TOO_MANY_REQUESTS");
-        Err(CustomError::TooManyRequests)
+        Err(FailedRequest::too_many_requests())
     } else {
-        log::error!(
-            "The shakespeare translation endpoint returned an unexpected status code: {}. \
-             Expected either 200 or 429.",
-            response.status()
-        );
-        Err(CustomError::InternalServerError)
+        Err(FailedRequest::unexpected_status_code(
+            text.to_string(),
+            response.status(),
+        ))
     }
 }

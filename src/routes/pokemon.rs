@@ -1,5 +1,5 @@
 use crate::configuration::ExternalServices;
-use crate::errors::CustomError;
+use crate::errors::ExternalServiceError;
 use crate::external_services::{pokeapi, shakespeare};
 use actix_web::{client::Client, web, HttpRequest, Result};
 
@@ -30,11 +30,17 @@ pub async fn get_pokemon_description(
 async fn get_description(
     pokemon_name: &str,
     external_services: web::Data<ExternalServices>,
-) -> Result<String, CustomError> {
+) -> Result<String, ExternalServiceError> {
     let client = Client::default();
-    let description =
-        pokeapi::get_pokemon_description(pokemon_name, &client, &external_services).await?;
+
+    let description = pokeapi::get_pokemon_description(pokemon_name, &client, &external_services)
+        .await
+        .map_err(|e| ExternalServiceError::from_pokeapi(e))?;
+
     let translated_description =
-        shakespeare::get_translation(&description, &client, &external_services).await?;
+        shakespeare::get_translation(&description, &client, &external_services)
+            .await
+            .map_err(|e| ExternalServiceError::from_shakespeare_api(e))?;
+
     Ok(translated_description)
 }

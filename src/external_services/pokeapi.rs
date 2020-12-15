@@ -1,5 +1,5 @@
 use crate::configuration::ExternalServices;
-use crate::errors::CustomError;
+use crate::errors::FailedRequest;
 use actix_web::client::Client;
 use actix_web::http::StatusCode;
 
@@ -25,36 +25,27 @@ pub(crate) async fn get_pokemon_description(
     pokemon_name: &str,
     client: &Client,
     external_services: &ExternalServices,
-) -> Result<String, CustomError> {
+) -> Result<String, FailedRequest> {
     let url = [&external_services.pokeapi_url, ENDPOINT, "/", pokemon_name].concat();
-    let mut response = client.get(url).send().await.map_err(|e| {
-        log::error!(
-            "An error occurred while querying the pokeapi endpoint. Error: {:?}",
-            e
-        );
-        CustomError::InternalServerError
-    })?;
+    let mut response = client
+        .get(url)
+        .send()
+        .await
+        .map_err(|e| FailedRequest::connection_error(e))?;
 
     if response.status() == StatusCode::OK {
-        let pokemon: Pokemon = response.json().await.map_err(|e| {
-            log::error!(
-                "An error occurred while deserializing the JSON payload \
-                 from the pokeapi endpoint. Error: {:?}",
-                e
-            );
-            CustomError::InternalServerError
-        })?;
+        let pokemon: Pokemon = response
+            .json()
+            .await
+            .map_err(|e| FailedRequest::invalid_payload(pokemon_name.to_string(), e))?;
         // TODO choose better what to return:
         Ok(pokemon.flavor_text_entries[0].flavor_text.to_string())
     } else if response.status() == StatusCode::NOT_FOUND {
-        log::debug!("Pokemon {} has not been found", pokemon_name);
-        Err(CustomError::NotFound)
+        Err(FailedRequest::not_found(pokemon_name.to_string()))
     } else {
-        log::error!(
-            "The pokeapi endpoint returned an unexpected status code: {}. \
-             Expected either 200 or 404.",
-            response.status()
-        );
-        Err(CustomError::InternalServerError)
+        Err(FailedRequest::unexpected_status_code(
+            pokemon_name.to_string(),
+            response.status(),
+        ))
     }
 }
