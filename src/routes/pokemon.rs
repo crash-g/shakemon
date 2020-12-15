@@ -20,7 +20,11 @@ pub async fn get_pokemon_description(
 
     log::info!("Received description request for {}", pokemon_name);
 
-    let pokemon_description = get_description(pokemon_name, external_services).await?;
+    let pokeapi_url = &external_services.pokeapi_url;
+    let shakespeare_translation_url = &external_services.shakespeare_translation_url;
+    let pokemon_description =
+        get_description(pokemon_name, pokeapi_url, shakespeare_translation_url).await?;
+
     Ok(web::Json(Pokemon {
         name: pokemon_name.to_string(),
         description: pokemon_description,
@@ -29,16 +33,17 @@ pub async fn get_pokemon_description(
 
 async fn get_description(
     pokemon_name: &str,
-    external_services: web::Data<ExternalServices>,
+    pokeapi_url: &str,
+    shakespeare_translation_url: &str,
 ) -> Result<String, ExternalServiceError> {
     let client = Client::default();
 
-    let description = pokeapi::get_pokemon_description(pokemon_name, &client, &external_services)
+    let description = pokeapi::get_pokemon_description(pokemon_name, &client, pokeapi_url)
         .await
         .map_err(|e| ExternalServiceError::from_pokeapi(e))?;
 
     let translated_description =
-        shakespeare::get_translation(&description, &client, &external_services)
+        shakespeare::get_translation(&description, &client, shakespeare_translation_url)
             .await
             .map_err(|e| ExternalServiceError::from_shakespeare_api(e))?;
 

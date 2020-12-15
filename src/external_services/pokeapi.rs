@@ -1,4 +1,3 @@
-use crate::configuration::ExternalServices;
 use crate::errors::FailedRequest;
 use actix_web::client::Client;
 use actix_web::http::StatusCode;
@@ -24,9 +23,9 @@ struct Language {
 pub(crate) async fn get_pokemon_description(
     pokemon_name: &str,
     client: &Client,
-    external_services: &ExternalServices,
+    base_url: &str,
 ) -> Result<String, FailedRequest> {
-    let url = [&external_services.pokeapi_url, ENDPOINT, "/", pokemon_name].concat();
+    let url = [base_url, ENDPOINT, "/", pokemon_name].concat();
     let mut response = client
         .get(url)
         .send()

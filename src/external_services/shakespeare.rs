@@ -1,4 +1,3 @@
-use crate::configuration::ExternalServices;
 use crate::errors::FailedRequest;
 use actix_web::client::Client;
 use actix_web::http::StatusCode;
@@ -23,9 +22,9 @@ struct TranslationContents {
 pub(crate) async fn get_translation(
     text: &str,
     client: &Client,
-    external_services: &ExternalServices,
+    base_url: &str,
 ) -> Result<String, FailedRequest> {
-    let url = [&external_services.shakespeare_translation_url, ENDPOINT].concat();
+    let url = [base_url, ENDPOINT].concat();
     let body = TextToTranslate {
         text: text.to_string(),
     };
