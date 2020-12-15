@@ -10,14 +10,15 @@ pub struct Pokemon {
 }
 
 pub async fn get_pokemon_description(
-    req: HttpRequest,
+    request: HttpRequest,
     external_services: web::Data<ExternalServices>,
 ) -> Result<web::Json<Pokemon>> {
-    let pokemon_name = req
+    let pokemon_name = request
         .match_info()
         .get("pokemon_name")
         .expect("Failed to find pokemon_name path parameter");
-    log::warn!("Got description request for {}", pokemon_name);
+
+    log::info!("Received description request for {}", pokemon_name);
 
     let pokemon_description = get_description(pokemon_name, external_services).await?;
     Ok(web::Json(Pokemon {
@@ -33,8 +34,7 @@ async fn get_description(
     let client = Client::default();
     let description =
         pokeapi::get_pokemon_description(pokemon_name, &client, &external_services).await?;
-    log::info!("Normal description: {}", description);
     let translated_description =
-        shakespeare::get_translation(&description, &client, &external_services).await;
+        shakespeare::get_translation(&description, &client, &external_services).await?;
     Ok(translated_description)
 }

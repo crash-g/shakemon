@@ -3,6 +3,7 @@ use actix_web::{HttpResponse, ResponseError};
 #[derive(Debug)]
 pub enum CustomError {
     NotFound,
+    TooManyRequests,
     InternalServerError,
 }
 
@@ -18,6 +19,7 @@ impl ResponseError for CustomError {
         use CustomError::*;
         match self {
             NotFound => HttpResponse::NotFound().finish(),
+            TooManyRequests => HttpResponse::TooManyRequests().finish(),
             InternalServerError => HttpResponse::InternalServerError().finish(),
         }
     }
