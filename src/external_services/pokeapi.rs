@@ -1,21 +1,22 @@
 use crate::errors::FailedRequest;
-use actix_web::client::Client;
 use actix_web::http::StatusCode;
+use reqwest::Client;
 
 const ENDPOINT: &str = "/api/v2/pokemon-species";
+const LANGUAGE: &str = "en";
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Debug)]
 struct Pokemon {
     flavor_text_entries: Vec<FlavorTextEntry>,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Debug)]
 struct FlavorTextEntry {
     flavor_text: String,
     language: Language,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Debug)]
 struct Language {
     name: String,
 }
@@ -26,8 +27,8 @@ pub(crate) async fn get_pokemon_description(
     base_url: &str,
 ) -> Result<String, FailedRequest> {
     let url = [base_url, ENDPOINT, "/", pokemon_name].concat();
-    let mut response = client
-        .get(url)
+    let response = client
+        .get(&url)
         .send()
         .await
         .map_err(|e| FailedRequest::connection_error(e))?;
@@ -37,8 +38,9 @@ pub(crate) async fn get_pokemon_description(
             .json()
             .await
             .map_err(|e| FailedRequest::invalid_payload(pokemon_name.to_string(), e))?;
-        // TODO choose better what to return:
-        Ok(pokemon.flavor_text_entries[0].flavor_text.to_string())
+
+        extract_description(pokemon)
+            .ok_or_else(|| FailedRequest::not_found(pokemon_name.to_string()))
     } else if response.status() == StatusCode::NOT_FOUND {
         Err(FailedRequest::not_found(pokemon_name.to_string()))
     } else {
@@ -47,4 +49,13 @@ pub(crate) async fn get_pokemon_description(
             response.status(),
         ))
     }
+}
+
+fn extract_description(pokemon: Pokemon) -> Option<String> {
+    pokemon
+        .flavor_text_entries
+        .into_iter()
+        .filter(|entry| &entry.language.name == LANGUAGE)
+        .max_by_key(|entry| entry.flavor_text.len())
+        .map(|entry| entry.flavor_text)
 }

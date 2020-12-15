@@ -1,6 +1,6 @@
 use crate::errors::FailedRequest;
-use actix_web::client::Client;
 use actix_web::http::StatusCode;
+use reqwest::Client;
 
 const ENDPOINT: &str = "/translate/shakespeare";
 
@@ -28,9 +28,10 @@ pub(crate) async fn get_translation(
     let body = TextToTranslate {
         text: text.to_string(),
     };
-    let mut response = client
-        .post(url)
-        .send_json(&body)
+    let response = client
+        .post(&url)
+        .json(&body)
+        .send()
         .await
         .map_err(|e| FailedRequest::connection_error(e))?;
 

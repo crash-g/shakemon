@@ -1,7 +1,8 @@
 use crate::configuration::ExternalServices;
 use crate::errors::ExternalServiceError;
 use crate::external_services::{pokeapi, shakespeare};
-use actix_web::{client::Client, web, HttpRequest, Result};
+use actix_web::{web, HttpRequest, Result};
+use reqwest::Client;
 
 #[derive(serde::Serialize)]
 pub struct Pokemon {
@@ -18,7 +19,7 @@ pub async fn get_pokemon_description(
         .get("pokemon_name")
         .expect("Failed to find pokemon_name path parameter");
 
-    log::info!("Received description request for {}", pokemon_name);
+    log::debug!("Received description request for {}", pokemon_name);
 
     let pokeapi_url = &external_services.pokeapi_url;
     let shakespeare_translation_url = &external_services.shakespeare_translation_url;
@@ -36,7 +37,7 @@ async fn get_description(
     pokeapi_url: &str,
     shakespeare_translation_url: &str,
 ) -> Result<String, ExternalServiceError> {
-    let client = Client::default();
+    let client = Client::new();
 
     let description = pokeapi::get_pokemon_description(pokemon_name, &client, pokeapi_url)
         .await
