@@ -1,6 +1,6 @@
 use actix_web::http::StatusCode;
 use wiremock::matchers::{method, path};
-use wiremock::{Mock, MockServer, Request, ResponseTemplate};
+use wiremock::{Mock, Request, ResponseTemplate};
 
 mod data;
 mod utils;
@@ -13,12 +13,8 @@ async fn get_pokemon_description_works() {
     let description_ref = "Description from pokeapi";
     let translated_description_ref = "Translated description from shakespeare";
 
-    let mock_pokeapi_server = MockServer::start().await;
-    let mock_shakespeare_server = MockServer::start().await;
-    let address = utils::spawn_app_with_mocked_external_services(
-        &mock_pokeapi_server,
-        &mock_shakespeare_server,
-    );
+    let (address, mock_pokeapi_server, mock_shakespeare_server) =
+        utils::spawn_app_with_mocked_external_services().await;
 
     let flavor_text_entry = pokeapi::FlavorTextEntry {
         flavor_text: description_ref.to_string(),
@@ -62,17 +58,12 @@ async fn get_pokemon_description_works() {
     assert_eq!(translated_description_ref, &pokemon.description);
 }
 
-
 #[actix_rt::test]
 async fn get_pokemon_description_not_found() {
     let pokemon_name_ref = "charizard";
 
-    let mock_pokeapi_server = MockServer::start().await;
-    let mock_shakespeare_server = MockServer::start().await;
-    let address = utils::spawn_app_with_mocked_external_services(
-        &mock_pokeapi_server,
-        &mock_shakespeare_server,
-    );
+    let (address, mock_pokeapi_server, mock_shakespeare_server) =
+        utils::spawn_app_with_mocked_external_services().await;
 
     Mock::given(method("GET"))
         .and(path(format!("{}/{}", pokeapi::ENDPOINT, pokemon_name_ref)))
@@ -103,12 +94,8 @@ async fn get_pokemon_description_too_many_requests() {
     let pokemon_name_ref = "charizard";
     let description_ref = "Description from pokeapi";
 
-    let mock_pokeapi_server = MockServer::start().await;
-    let mock_shakespeare_server = MockServer::start().await;
-    let address = utils::spawn_app_with_mocked_external_services(
-        &mock_pokeapi_server,
-        &mock_shakespeare_server,
-    );
+    let (address, mock_pokeapi_server, mock_shakespeare_server) =
+        utils::spawn_app_with_mocked_external_services().await;
 
     let flavor_text_entry = pokeapi::FlavorTextEntry {
         flavor_text: description_ref.to_string(),

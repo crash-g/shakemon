@@ -15,16 +15,19 @@ pub fn spawn_app() -> String {
 }
 
 #[allow(dead_code)]
-pub fn spawn_app_with_mocked_external_services(
-    mock_pokeapi_server: &MockServer,
-    mock_shakespeare_server: &MockServer,
-) -> String {
+pub async fn spawn_app_with_mocked_external_services() -> (String, MockServer, MockServer) {
     init_log();
+    let mock_pokeapi_server = MockServer::start().await;
+    let mock_shakespeare_server = MockServer::start().await;
     let external_services = ExternalServices {
         pokeapi_url: mock_pokeapi_server.uri(),
         shakespeare_translation_url: mock_shakespeare_server.uri(),
     };
-    start_background_server(external_services)
+    (
+        start_background_server(external_services),
+        mock_pokeapi_server,
+        mock_shakespeare_server,
+    )
 }
 
 fn start_background_server(external_services: ExternalServices) -> String {
