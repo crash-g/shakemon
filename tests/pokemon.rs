@@ -1,4 +1,4 @@
-use actix_web::http::StatusCode;
+use reqwest::{Client, StatusCode};
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, Request, ResponseTemplate};
 
@@ -44,7 +44,7 @@ async fn get_pokemon_description_works() {
         .mount(&mock_shakespeare_server)
         .await;
 
-    let client = reqwest::Client::new();
+    let client = Client::new();
 
     let response = client
         .get(&format!("{}/pokemon/{}", address, pokemon_name_ref))
@@ -78,7 +78,7 @@ async fn get_pokemon_description_not_found() {
         .mount(&mock_shakespeare_server)
         .await;
 
-    let client = reqwest::Client::new();
+    let client = Client::new();
 
     let response = client
         .get(&format!("{}/pokemon/{}", address, pokemon_name_ref))
@@ -120,7 +120,7 @@ async fn get_pokemon_description_too_many_requests() {
         .mount(&mock_shakespeare_server)
         .await;
 
-    let client = reqwest::Client::new();
+    let client = Client::new();
 
     let response = client
         .get(&format!("{}/pokemon/{}", address, pokemon_name_ref))

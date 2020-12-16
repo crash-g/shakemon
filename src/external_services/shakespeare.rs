@@ -1,6 +1,5 @@
 use crate::errors::FailedRequest;
-use actix_web::http::StatusCode;
-use reqwest::Client;
+use reqwest::{Client, StatusCode};
 
 const ENDPOINT: &str = "/translate/shakespeare";
 

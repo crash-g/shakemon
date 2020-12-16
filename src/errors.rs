@@ -1,5 +1,5 @@
-use actix_web::http::StatusCode;
 use actix_web::{HttpResponse, ResponseError};
+use reqwest::StatusCode;
 use std::fmt::Debug;
 
 #[derive(Debug)]
