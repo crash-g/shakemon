@@ -58,3 +58,54 @@ fn extract_description(pokemon: Pokemon) -> Option<String> {
         .max_by_key(|entry| entry.flavor_text.len())
         .map(|entry| entry.flavor_text)
 }
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn test_the_longest_english_description_is_picked() {
+        let short_description = "ab";
+        let longest_english_description = "abcd";
+        let longest_italian_description = "abcde";
+
+        let english = "en";
+        let italian = "it";
+
+        let flavor_text_entries = vec![
+            FlavorTextEntry {
+                flavor_text: longest_italian_description.to_string(),
+                language: Language {
+                    name: italian.to_string(),
+                },
+            },
+            FlavorTextEntry {
+                flavor_text: short_description.to_string(),
+                language: Language {
+                    name: english.to_string(),
+                },
+            },
+            FlavorTextEntry {
+                flavor_text: longest_english_description.to_string(),
+                language: Language {
+                    name: english.to_string(),
+                },
+            },
+            FlavorTextEntry {
+                flavor_text: short_description.to_string(),
+                language: Language {
+                    name: english.to_string(),
+                },
+            },
+        ];
+
+        let pokemon = Pokemon {
+            flavor_text_entries,
+        };
+
+        let description = extract_description(pokemon);
+        assert!(description.is_some());
+        assert_eq!(longest_english_description, description.unwrap());
+    }
+}
