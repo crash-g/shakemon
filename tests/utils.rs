@@ -31,11 +31,12 @@ pub async fn spawn_app_with_mocked_external_services() -> (String, MockServer, M
 }
 
 fn start_background_server(external_services: ExternalServices) -> String {
+    let cache_size = 10;
     let listener =
         TcpListener::bind(&format!("{}:0", LOCALHOST)).expect("Failed to bind random port");
     let port = listener.local_addr().unwrap().port();
-    let server =
-        shakespeare_pokemon::run(listener, external_services).expect("Failed to bind address");
+    let server = shakespeare_pokemon::run(listener, cache_size, external_services)
+        .expect("Failed to bind address");
     let _ = tokio::spawn(server);
     format!("http://{}:{}", LOCALHOST, port)
 }

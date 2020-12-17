@@ -56,6 +56,19 @@ async fn get_pokemon_description_works() {
     let pokemon: data::Pokemon = response.json().await.unwrap();
     assert_eq!(pokemon_name_ref, &pokemon.name);
     assert_eq!(translated_description_ref, &pokemon.description);
+
+    // We repeat the test once to make sure that the cache kicks in
+    // and we get the same answer without querying external services.
+    let response = client
+        .get(&format!("{}/pokemon/{}", address, pokemon_name_ref))
+        .send()
+        .await
+        .expect("Failed to execute request.");
+
+    assert!(response.status().is_success());
+    let pokemon: data::Pokemon = response.json().await.unwrap();
+    assert_eq!(pokemon_name_ref, &pokemon.name);
+    assert_eq!(translated_description_ref, &pokemon.description);
 }
 
 #[actix_rt::test]

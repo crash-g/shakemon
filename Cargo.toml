@@ -16,10 +16,11 @@ actix-rt = "1.1.1"
 actix-web = { version = "3.3.2", features = ["rustls"] }
 config = "0.10.1"
 log = "0.4.11"
+lru = "0.6.2"
 pretty_env_logger = "0.4.0"
 reqwest = { version = "0.10.9", features = ["json"] }
 serde = { version = "1", features = ["derive"]}
+tokio = { version = "0.2.24", features = ["sync"] }  # This must be the same version that actix uses
 
 [dev-dependencies]
-tokio = "0.2.24"  # This must be the same version that actix uses
 wiremock = "0.3.0"

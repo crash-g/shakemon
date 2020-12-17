@@ -1,6 +1,7 @@
 #[derive(serde::Deserialize)]
 pub struct Configuration {
     pub application_port: u16,
+    pub cache_size: usize,
     pub external_services: ExternalServices,
 }
 

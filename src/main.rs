@@ -13,5 +13,10 @@ async fn main() -> std::io::Result<()> {
     let configuration = get_configuration(CONFIGURATION_FILE);
     let address = format!("{}:{}", HOST, configuration.application_port);
     let listener = TcpListener::bind(address)?;
-    run(listener, configuration.external_services)?.await
+    run(
+        listener,
+        configuration.cache_size,
+        configuration.external_services,
+    )?
+    .await
 }
