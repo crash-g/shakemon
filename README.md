@@ -1,3 +1,5 @@
+[![Actions Status](https://github.com/crash-g/shakemon/workflows/Continuous%20integration/badge.svg)](https://github.com/crash-g/shakemon/actions) ![GitHub](https://img.shields.io/github/license/crash-g/shakemon?color=blue&label=License)
+
 A server that offers Pokemon descriptions written
 using Shakespeare's style.
 
