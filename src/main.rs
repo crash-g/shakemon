@@ -6,21 +6,23 @@
 //! If using cargo, use `cargo run --release`. If using the executable
 //! file directly, just execute it (see below for customization options).
 //!
-//! ## Compile-time customization
+//! ## Customization
+//!
+//! ### Compile-time customization
 //!
 //! Three variables are available for compile-time customization:
-//! - LOG_ENV_VAR → The name of the environment variable which controls the log level
-//! - CONFIGURATION_FILE → The path to the configuration file which is parsed on startup
-//! - HOST → The host that the server will listen to
+//! - `LOG_ENV_VAR` → The name of the environment variable which controls the log level
+//! - `CONFIGURATION_FILE` → The path to the configuration file which is parsed on startup
+//! - `HOST` → The host that the server will listen to
 //!
-//! ## Environment variable customization
+//! ### Environment variable customization
 //!
 //! The `RUST_LOG` variable is the environment variable that by default controls
 //! the log level. Please see
 //! [the documentation of env_logger](https://docs.rs/env_logger/0.7.1/env_logger/index.html)
 //! for a description of the values that it accepts.
 //!
-//! ## Configuration file
+//! ### Configuration file
 //!
 //! The application by default expects a `configuration.yml` file in the same
 //! folder from where it is launched. Please see the bundled configuration file for
