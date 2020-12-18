@@ -28,9 +28,9 @@
 //! folder from where it is launched. Please see the bundled configuration file for
 //! a description of the available configuration properties.
 
-use shakespeare_pokemon::configuration::get_configuration;
-use shakespeare_pokemon::run;
-use shakespeare_pokemon::telemetry::init_log;
+use shakemon::configuration::get_configuration;
+use shakemon::run;
+use shakemon::telemetry::init_log;
 use std::net::TcpListener;
 
 const LOG_ENV_VAR: &str = "RUST_LOG";
@@ -43,6 +43,11 @@ async fn main() -> std::io::Result<()> {
     let configuration = get_configuration(CONFIGURATION_FILE);
     let address = format!("{}:{}", HOST, configuration.application_port);
     let listener = TcpListener::bind(address)?;
+    log::info!(
+        "Starting service on {}:{}",
+        HOST,
+        configuration.application_port
+    );
     run(
         listener,
         configuration.cache_size,

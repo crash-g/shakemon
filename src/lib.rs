@@ -2,7 +2,6 @@
 //! using Shakespeare's style.
 
 use actix_web::dev::Server;
-use actix_web::middleware::Logger;
 use actix_web::{web, App, HttpServer};
 use lru::LruCache;
 use std::net::TcpListener;
@@ -36,7 +35,6 @@ pub fn run(
     let thread_safe_cache = Arc::new(Mutex::new(cache));
     let server = HttpServer::new(move || {
         App::new()
-            .wrap(Logger::default())
             .data(external_services.clone())
             .data(thread_safe_cache.clone())
             .route("/health_check", web::get().to(routes::health_check))

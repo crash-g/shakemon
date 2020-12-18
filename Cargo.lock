@@ -2540,7 +2540,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "shakespeare_pokemon"
+name = "shakemon"
 version = "0.1.0"
 dependencies = [
  "actix-rt",

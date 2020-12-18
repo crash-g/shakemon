@@ -1,5 +1,5 @@
 [package]
-name = "shakespeare_pokemon"
+name = "shakemon"
 version = "0.1.0"
 authors = ["crash <crash@inventati.org>"]
 edition = "2018"
@@ -9,7 +9,7 @@ path = "src/lib.rs"
 
 [[bin]]
 path = "src/main.rs"
-name = "app"
+name = "shakemon"
 
 [dependencies]
 actix-rt = "1.1.1"

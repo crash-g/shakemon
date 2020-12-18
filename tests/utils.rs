@@ -1,4 +1,4 @@
-use shakespeare_pokemon::configuration::ExternalServices;
+use shakemon::configuration::ExternalServices;
 use std::env;
 use std::net::TcpListener;
 use wiremock::MockServer;
@@ -38,8 +38,8 @@ fn start_background_server(external_services: ExternalServices) -> String {
     let listener =
         TcpListener::bind(&format!("{}:0", LOCALHOST)).expect("Failed to bind random port");
     let port = listener.local_addr().unwrap().port();
-    let server = shakespeare_pokemon::run(listener, cache_size, external_services)
-        .expect("Failed to bind address");
+    let server =
+        shakemon::run(listener, cache_size, external_services).expect("Failed to bind address");
     let _ = tokio::spawn(server);
     format!("http://{}:{}", LOCALHOST, port)
 }
@@ -48,5 +48,5 @@ fn init_log() {
     if env::var(LOG_ENV_VAR).is_err() {
         env::set_var(LOG_ENV_VAR, LOG_LEVEL);
     }
-    shakespeare_pokemon::telemetry::init_log(LOG_ENV_VAR);
+    shakemon::telemetry::init_log(LOG_ENV_VAR);
 }

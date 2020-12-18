@@ -39,6 +39,12 @@ pub async fn get_pokemon_description(
         }
     };
 
+    log::debug!(
+        "{}: the description is {}",
+        pokemon_name,
+        pokemon_description
+    );
+
     Ok(web::Json(Pokemon {
         name: pokemon_name,
         description: pokemon_description,
