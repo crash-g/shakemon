@@ -20,7 +20,8 @@ lru = "0.6.2"
 pretty_env_logger = "0.4.0"
 reqwest = { version = "0.10.9", features = ["json"] }
 serde = { version = "1", features = ["derive"]}
-tokio = { version = "0.2.24", features = ["sync"] }  # This must be the same version that actix uses
+tokio = { version = "0.2.24", features = ["sync", "rt-threaded", "macros"] }  # This must be the same version that actix uses
 
 [dev-dependencies]
 wiremock = "0.3.0"
+rand = "0.7"
