@@ -14,7 +14,15 @@ Compile and run the project with
 
     cargo run --release
 
-from the root folder of the project.
+### With Docker
+
+Clean the target directory (if needed) and build the Docker image
+
+    cargo clean && docker build -t shakemon:latest .
+
+Run with
+
+    docker run shakemon:latest
 
 ## Customization
 
@@ -94,7 +102,9 @@ the application.
 We have a few black-box tests that verify the server behavior
 using mocked HTTP servers to simulate *PokeAPI* and *funtranslations*.
 
-Tests can be run with `cargo test`.
+Tests can be run with `cargo test` or, if using Docker,
+`docker run shakemon:latest cargo test --release` (you need to build
+the image first).
 
 ## What could be improved
 
@@ -108,3 +118,5 @@ non-exhaustive and randomly-ordered list:
   if available, in order to work around the rate limit
 - Telemetry relies on simple logs and could benefit from a more
   structured solution
+- The Docker image is very large and there are various ways
+  to optimize it
