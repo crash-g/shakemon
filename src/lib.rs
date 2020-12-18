@@ -1,3 +1,6 @@
+//! A server that offers Pokemon descriptions written
+//! using Shakespeare's style.
+
 use actix_web::dev::Server;
 use actix_web::middleware::Logger;
 use actix_web::{web, App, HttpServer};
@@ -14,6 +17,16 @@ pub mod telemetry;
 
 use configuration::ExternalServices;
 
+/// Initialize the server with the given configuration.
+///
+/// Three options can be customized:
+/// - listener → A TCP listener that the server will listen to
+/// - cache_size → The size of the cache that the server uses to store
+///   Pokemon descriptions (a value of 0 will deactivate it)
+/// - external_services → The addresses of the external services that
+///   the server relies to ([PokeAPI](https://pokeapi.co/) for Pokemon
+///   descriptions and [funtranslations](https://funtranslations.com/api/)
+///   to translate descriptions using Shakespeare's style)
 pub fn run(
     listener: TcpListener,
     cache_size: usize,

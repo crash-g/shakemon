@@ -1,5 +1,5 @@
-application_port: 8000
-cache_size: 100
+application_port: 8000          # The port that the server will listen to
+cache_size: 100                 # The size of the internal cache for Pokemon descriptions (0 turns the cache off)
 external_services:
-  pokeapi_url: "https://pokeapi.co"
-  shakespeare_translation_url: "https://api.funtranslations.com"
+  pokeapi_url: "https://pokeapi.co"                               # The URL of PokeAPI API
+  shakespeare_translation_url: "https://api.funtranslations.com"  # The URL of funtranslations API
